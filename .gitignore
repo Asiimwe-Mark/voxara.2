@@ -1,0 +1,15 @@
+```
+# Supabase specific ignores
+supabase/.temp/
+supabase/logs/
+
+# Database dumps and backups
+*.dump
+*.backup
+*.sql.gz
+
+# Environment and local development
+.env.local
+.env.production
+.supabase/
+```
