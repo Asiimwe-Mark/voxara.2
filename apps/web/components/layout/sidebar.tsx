@@ -5,27 +5,67 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth-store'
 import { Button } from '@/components/ui/button'
+import {
+  LayoutDashboard,
+  Users,
+  DollarSign,
+  CalendarCheck,
+  BookOpen,
+  ClipboardList,
+  FileText,
+  UserCheck,
+  CreditCard,
+  Megaphone,
+  BarChart3,
+  Building2,
+  Settings,
+  LogOut
+} from 'lucide-react'
+
+const superAdminNavItems = [
+  { href: '/super-admin', label: 'All Schools', icon: Building2 },
+  { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/settings', label: 'Settings', icon: Settings },
+]
 
 const adminNavItems = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/students', label: 'Students' },
-  { href: '/fees', label: 'Fees' },
-  { href: '/attendance', label: 'Attendance' },
-  { href: '/parents', label: 'Parents' },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/students', label: 'Students', icon: Users },
+  { href: '/fees', label: 'Fees', icon: DollarSign },
+  { href: '/attendance', label: 'Attendance', icon: CalendarCheck },
+  { href: '/subjects', label: 'Subjects', icon: BookOpen },
+  { href: '/marks', label: 'Marks', icon: ClipboardList },
+  { href: '/reports', label: 'Reports', icon: FileText },
+  { href: '/parents', label: 'Parents', icon: UserCheck },
+  { href: '/payroll', label: 'Payroll', icon: CreditCard },
+  { href: '/announcements', label: 'Announcements', icon: Megaphone },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ]
 
 const bursarNavItems = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/fees', label: 'Fee Management' },
-  { href: '/payments', label: 'Payments' },
-  { href: '/reports', label: 'Reports' },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/fees', label: 'Fee Management', icon: DollarSign },
+  { href: '/payments', label: 'Payments', icon: CreditCard },
+  { href: '/reports', label: 'Reports', icon: FileText },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ]
 
 const teacherNavItems = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/attendance', label: 'Attendance' },
-  { href: '/marks', label: 'Marks' },
-  { href: '/students', label: 'My Students' },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/attendance', label: 'Attendance', icon: CalendarCheck },
+  { href: '/marks', label: 'Marks', icon: ClipboardList },
+  { href: '/subjects', label: 'Subjects', icon: BookOpen },
+  { href: '/reports', label: 'Reports', icon: FileText },
+  { href: '/students', label: 'My Students', icon: Users },
+  { href: '/announcements', label: 'Announcements', icon: Megaphone },
+]
+
+const parentNavItems = [
+  { href: '/parent', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/parent/fees', label: 'Fees & Payments', icon: DollarSign },
+  { href: '/parent/reports', label: 'Report Cards', icon: FileText },
+  { href: '/parent/attendance', label: 'Attendance', icon: CalendarCheck },
+  { href: '/parent/announcements', label: 'Announcements', icon: Megaphone },
 ]
 
 export function Sidebar() {
@@ -34,12 +74,16 @@ export function Sidebar() {
 
   const getNavItems = () => {
     switch (user?.role) {
+      case 'SUPER_ADMIN':
+        return superAdminNavItems
       case 'SCHOOL_ADMIN':
         return adminNavItems
       case 'BURSAR':
         return bursarNavItems
       case 'TEACHER':
         return teacherNavItems
+      case 'PARENT':
+        return parentNavItems
       default:
         return []
     }
@@ -53,21 +97,25 @@ export function Sidebar() {
         <h1 className="text-xl font-bold text-[#F5A623]">SKULI</h1>
       </div>
 
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              'block rounded-md px-3 py-2 text-sm transition-colors',
-              pathname === item.href
-                ? 'bg-[#F5A623] text-[#0A1628]'
-                : 'text-white/80 hover:bg-white/10 hover:text-white'
-            )}
-          >
-            {item.label}
-          </Link>
-        ))}
+      <nav className="flex-1 space-y-1 px-3 py-4 overflow-y-auto">
+        {navItems.map((item) => {
+          const Icon = item.icon || LayoutDashboard
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors',
+                pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
+                  ? 'bg-[#F5A623] text-[#0A1628]'
+                  : 'text-white/80 hover:bg-white/10 hover:text-white'
+              )}
+            >
+              <Icon className="w-4 h-4" />
+              {item.label}
+            </Link>
+          )
+        })}
       </nav>
 
       <div className="border-t border-white/10 p-4">
@@ -84,6 +132,7 @@ export function Sidebar() {
           onClick={logout}
           className="w-full border-white/20 text-white hover:bg-white/10"
         >
+          <LogOut className="w-4 h-4 mr-2" />
           Sign Out
         </Button>
       </div>
